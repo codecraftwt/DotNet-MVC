@@ -2,7 +2,7 @@
 
 namespace EmployeeManagement.Models
 {
-    public class Users : IdentityUser
+    public class Users : ApplicationUser
     {
         public string FullName { get; set; }
     }

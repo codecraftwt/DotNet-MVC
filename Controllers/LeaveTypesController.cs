@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -56,7 +57,8 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LeaveType leaveType)
         {
-            leaveType.CreatedById = "Code Craft";
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            leaveType.CreatedById = Userid;
             leaveType.CreatedOn = DateTime.Now;
             leaveType.ModifiedById = leaveType.CreatedById;
             leaveType.ModifiedOn = leaveType.CreatedOn;
@@ -66,7 +68,7 @@ namespace EmployeeManagement.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(leaveType);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
             }
             return View(leaveType);
@@ -104,8 +106,12 @@ namespace EmployeeManagement.Controllers
             {
                 try
                 {
-                    _context.Update(leaveType);
-                    await _context.SaveChangesAsync();
+                    var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var oldleavetype = await _context.LeaveTypes.FindAsync(id);
+                    leaveType.ModifiedById = Userid;
+                    leaveType.ModifiedOn = DateTime.Now;
+                    _context.Entry(oldleavetype).CurrentValues.SetValues(leaveType);
+                    await _context.SaveChangesAsync(Userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -151,8 +157,8 @@ namespace EmployeeManagement.Controllers
             {
                 _context.LeaveTypes.Remove(leaveType);
             }
-
-            await _context.SaveChangesAsync();
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 
