@@ -11,22 +11,22 @@ using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
-    public class SystemCodesController : Controller
+    public class HolidaysController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public SystemCodesController(ApplicationDbContext context)
+        public HolidaysController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: SystemCodes
+        // GET: Holidays
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SystemCodes.ToListAsync());
+            return View(await _context.Holidays.ToListAsync());
         }
 
-        // GET: SystemCodes/Details/5
+        // GET: Holidays/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,40 +34,42 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var systemCode = await _context.SystemCodes
+            var holiday = await _context.Holidays
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (systemCode == null)
+            if (holiday == null)
             {
                 return NotFound();
             }
 
-            return View(systemCode);
+            return View(holiday);
         }
 
-        // GET: SystemCodes/Create
+        // GET: Holidays/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: SystemCodes/Create
+        // POST: Holidays/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Description,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCode systemCode)
+        public async Task<IActionResult> Create(Holiday holiday)
         {
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (ModelState.IsValid)
-            {
-                _context.Add(systemCode);
+            holiday.CreatedById = Userid;
+            holiday.ModifiedById = "Sam";
+            holiday.CreatedOn = DateTime.Now;
+
+                _context.Add(holiday);
                 await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
-            }
-            return View(systemCode);
+
+            return View(holiday);
         }
 
-        // GET: SystemCodes/Edit/5
+        // GET: Holidays/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,36 +77,36 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var systemCode = await _context.SystemCodes.FindAsync(id);
-            if (systemCode == null)
+            var holiday = await _context.Holidays.FindAsync(id);
+            if (holiday == null)
             {
                 return NotFound();
             }
-            return View(systemCode);
+            return View(holiday);
         }
 
-        // POST: SystemCodes/Edit/5
+        // POST: Holidays/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Description,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCode systemCode)
+        public async Task<IActionResult> Edit(int id, Holiday holiday)
         {
-            if (id != systemCode.Id)
+            if (id != holiday.Id)
             {
                 return NotFound();
             }
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (ModelState.IsValid)
-            {
-                try
+            holiday.ModifiedById = Userid;
+            holiday.ModifiedOn = DateTime.Now;
+            try
                 {
-                    _context.Update(systemCode);
+                    _context.Update(holiday);
                     await _context.SaveChangesAsync(Userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SystemCodeExists(systemCode.Id))
+                    if (!HolidayExists(holiday.Id))
                     {
                         return NotFound();
                     }
@@ -114,11 +116,11 @@ namespace EmployeeManagement.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            return View(systemCode);
+
+            return View(holiday);
         }
 
-        // GET: SystemCodes/Delete/5
+        // GET: Holidays/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,34 +128,34 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var systemCode = await _context.SystemCodes
+            var holiday = await _context.Holidays
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (systemCode == null)
+            if (holiday == null)
             {
                 return NotFound();
             }
 
-            return View(systemCode);
+            return View(holiday);
         }
 
-        // POST: SystemCodes/Delete/5
+        // POST: Holidays/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var systemCode = await _context.SystemCodes.FindAsync(id);
-            if (systemCode != null)
+            var holiday = await _context.Holidays.FindAsync(id);
+            if (holiday != null)
             {
-                _context.SystemCodes.Remove(systemCode);
+                _context.Holidays.Remove(holiday);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SystemCodeExists(int id)
+        private bool HolidayExists(int id)
         {
-            return _context.SystemCodes.Any(e => e.Id == id);
+            return _context.Holidays.Any(e => e.Id == id);
         }
     }
 }

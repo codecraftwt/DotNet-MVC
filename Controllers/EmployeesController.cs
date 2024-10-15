@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -46,6 +47,10 @@ namespace EmployeeManagement.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code=="Gender"), "Id", "Description");
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+            ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name");
             return View();
         }
 
@@ -56,6 +61,7 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Employee employee)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             employee.CreatedById = "Code Craft";
             employee.CreatedOn = DateTime.Now;
             employee.ModifiedById = employee.CreatedById;
@@ -73,13 +79,14 @@ namespace EmployeeManagement.Controllers
                     }
                 }
             }
-
-            if (ModelState.IsValid)
-            {
                 _context.Add(employee);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
-            }
+
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", employee.GenderId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", employee.CountryId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name", employee.DepartmentId);
             return View(employee);
         }
 
@@ -96,6 +103,11 @@ namespace EmployeeManagement.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description");
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+            ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name");
             return View(employee);
         }
 
@@ -131,6 +143,11 @@ namespace EmployeeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", employee.GenderId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", employee.CountryId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name", employee.DepartmentId);
             return View(employee);
         }
 

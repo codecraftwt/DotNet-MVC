@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -59,10 +60,11 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SystemProfile systemProfile)
         {
-                systemProfile.CreatedById = "Code";
+                var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                systemProfile.CreatedById = Userid;
                 systemProfile.ModifiedById = "Expert";
                 _context.Add(systemProfile);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
 
             ViewData["ProfileId"] = new SelectList(_context.SystemProfiles, "Id", "Name", systemProfile.ProfileId);
@@ -146,13 +148,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var systemProfile = await _context.SystemProfiles.FindAsync(id);
             if (systemProfile != null)
             {
                 _context.SystemProfiles.Remove(systemProfile);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

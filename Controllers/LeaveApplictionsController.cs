@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -114,7 +115,7 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> ApproveLeave(LeaveAppliction leave)
         {
-
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var approvedstatus = _context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "LeaveApprovalStatus" && y.Code == "Approved").FirstOrDefault();
 
             var LeaveAppliction = await _context.LeaveApplictions
@@ -135,7 +136,7 @@ namespace EmployeeManagement.Controllers
             LeaveAppliction.ApprovalNotes = leave.ApprovalNotes;
 
             _context.Update(LeaveAppliction);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
 
             ViewData["DurationId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "LeaveDuration"), "Id", "Description");
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName");
