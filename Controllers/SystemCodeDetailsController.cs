@@ -58,9 +58,13 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SystemCodeId,Code,Description,OrderNo,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCodeDetail systemCodeDetail)
+        public async Task<IActionResult> Create(SystemCodeDetail systemCodeDetail)
         {
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            systemCodeDetail.CreatedById = Userid;
+            systemCodeDetail.ModifiedById = "";
+            systemCodeDetail.CreatedOn = DateTime.Now;
+
             _context.Add(systemCodeDetail);
             await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
@@ -90,19 +94,21 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SystemCodeId,Code,Description,OrderNo,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCodeDetail systemCodeDetail)
+        public async Task<IActionResult> Edit(int id, SystemCodeDetail systemCodeDetail)
         {
             if (id != systemCodeDetail.Id)
             {
                 return NotFound();
             }
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            systemCodeDetail.CreatedById = Userid;
+            systemCodeDetail.ModifiedById = Userid;
+            systemCodeDetail.CreatedOn = DateTime.Now;
 
-            if (ModelState.IsValid)
-            {
-                try
+            try
                 {
                     _context.Update(systemCodeDetail);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(Userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,7 +122,7 @@ namespace EmployeeManagement.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+
             ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description", systemCodeDetail.SystemCodeId);
             return View(systemCodeDetail);
         }

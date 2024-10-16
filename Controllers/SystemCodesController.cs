@@ -55,15 +55,17 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Description,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCode systemCode)
+        public async Task<IActionResult> Create(SystemCode systemCode)
         {
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (ModelState.IsValid)
-            {
+            systemCode.CreatedById = Userid;
+            systemCode.ModifiedById = "";
+            systemCode.CreatedOn = DateTime.Now;
+
                 _context.Add(systemCode);
                 await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
-            }
+
             return View(systemCode);
         }
 

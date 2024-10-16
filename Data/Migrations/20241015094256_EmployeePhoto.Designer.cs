@@ -4,6 +4,7 @@ using EmployeeManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241015094256_EmployeePhoto")]
+    partial class EmployeePhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -357,18 +360,6 @@ namespace EmployeeManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BankAccountNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("BankId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CauseofInactivityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CompanyEmail")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
@@ -396,27 +387,12 @@ namespace EmployeeManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EmploymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("EmploymentTermsId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GenderId")
                         .HasColumnType("int");
-
-                    b.Property<string>("IBAN")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("InactiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("KRAPIN")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -433,38 +409,13 @@ namespace EmployeeManagement.Migrations
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NHIF")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NSSFNO")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PassportNo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("PhoneNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ReasonforterminationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SWIFTCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StatusId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("TerminationDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.HasIndex("CauseofInactivityId");
 
                     b.HasIndex("CountryId");
 
@@ -472,13 +423,7 @@ namespace EmployeeManagement.Migrations
 
                     b.HasIndex("DesignationId");
 
-                    b.HasIndex("EmploymentTermsId");
-
                     b.HasIndex("GenderId");
-
-                    b.HasIndex("ReasonforterminationId");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("Employees");
                 });
@@ -934,16 +879,6 @@ namespace EmployeeManagement.Migrations
 
             modelBuilder.Entity("EmployeeManagement.Models.Employee", b =>
                 {
-                    b.HasOne("EmployeeManagement.Models.Bank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("EmployeeManagement.Models.SystemCodeDetail", "CauseofInactivity")
-                        .WithMany()
-                        .HasForeignKey("CauseofInactivityId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("EmployeeManagement.Models.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
@@ -959,29 +894,10 @@ namespace EmployeeManagement.Migrations
                         .HasForeignKey("DesignationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("EmployeeManagement.Models.SystemCodeDetail", "EmploymentTerms")
-                        .WithMany()
-                        .HasForeignKey("EmploymentTermsId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("EmployeeManagement.Models.SystemCodeDetail", "Gender")
                         .WithMany()
                         .HasForeignKey("GenderId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("EmployeeManagement.Models.SystemCodeDetail", "Reasonfortermination")
-                        .WithMany()
-                        .HasForeignKey("ReasonforterminationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("EmployeeManagement.Models.SystemCodeDetail", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Bank");
-
-                    b.Navigation("CauseofInactivity");
 
                     b.Navigation("Country");
 
@@ -989,13 +905,7 @@ namespace EmployeeManagement.Migrations
 
                     b.Navigation("Designation");
 
-                    b.Navigation("EmploymentTerms");
-
                     b.Navigation("Gender");
-
-                    b.Navigation("Reasonfortermination");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("EmployeeManagement.Models.LeaveAppliction", b =>

@@ -34,10 +34,7 @@
                         @Html.DisplayNameFor(model => model.EmailAddress)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Country)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.DateOfBirth)
+                        @Html.DisplayNameFor(model => model.Status)
                     </th>
                     <th>
                         Action
@@ -67,10 +64,7 @@
                             @Html.DisplayFor(modelItem => item.EmailAddress)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Country)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DateOfBirth)
+                            @Html.DisplayFor(modelItem => item.Status.Description)
                         </td>
                         <td>
                             <div class="dropdown">

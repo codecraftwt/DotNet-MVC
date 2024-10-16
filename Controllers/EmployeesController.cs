@@ -14,16 +14,17 @@ namespace EmployeeManagement.Controllers
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public EmployeesController(ApplicationDbContext context)
+        private readonly IConfiguration _configuration;
+        public EmployeesController(IConfiguration configuration, ApplicationDbContext context)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Employees.ToListAsync());
+            return View(await _context.Employees.Include(x => x.Status).ToListAsync());
         }
 
         // GET: Employees/Details/5
@@ -47,6 +48,8 @@ namespace EmployeeManagement.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
+            ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name");
+            ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code== "EmploymentTerms"), "Id", "Description");
             ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code=="Gender"), "Id", "Description");
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
@@ -59,13 +62,26 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> Create(Employee employee, IFormFile employeephoto)
         {
+            if(employeephoto.Length > 0)
+            {
+                var fileName = "EmployeePhoto_" + DateTime.Now.ToString("yyyymmddhhmmss") + "_" + employeephoto.FileName;
+                var path = _configuration["FileSettings:UploadFolder"]!;
+                var filePath = Path.Combine(path, fileName);
+                var stream = new FileStream(filePath, FileMode.Create);
+                await employeephoto.CopyToAsync(stream);
+                employee.Photo = fileName;
+            }
+
+            var statusId = await _context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "EmployeeStatus" && x.Code == "Active").FirstOrDefaultAsync();
+
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             employee.CreatedById = "Code Craft";
             employee.CreatedOn = DateTime.Now;
             employee.ModifiedById = employee.CreatedById;
             employee.ModifiedOn = employee.CreatedOn;
+            employee.StatusId = statusId.Id;
 
             ModelState.Remove("CreatedById");
             ModelState.Remove("ModifiedById");
@@ -83,6 +99,8 @@ namespace EmployeeManagement.Controllers
                 await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
 
+            ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name", employee.BankId);
+            ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "EmploymentTerms"), "Id", "Description", employee.EmploymentTermsId);
             ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", employee.GenderId);
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", employee.CountryId);
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
