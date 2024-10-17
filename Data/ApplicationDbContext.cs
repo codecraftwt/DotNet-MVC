@@ -38,6 +38,7 @@ namespace EmployeeManagement.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<SystemProfile> SystemProfiles { get; set; }
         public DbSet<LeaveAppliction> LeaveApplictions { get; set; }
+        public DbSet<LeaveAdjustmentEntry> LeaveAdjustmentEntries { get; set; }
         public DbSet<Audit> AuditLogs { get; set; }
         public DbSet<RoleProfile> RoleProfiles { get; set; }
         public DbSet<Holiday> Holidays { get; set; }

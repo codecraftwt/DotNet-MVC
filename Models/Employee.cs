@@ -15,6 +15,8 @@ namespace EmployeeManagement.Models
 
         [DisplayName("Last Name")]
         public string LastName { get; set; }
+
+        [DisplayName("Full Name")]
         public string FullName => $"{FirstName} {MiddleName} {LastName}";
 
         [DisplayName("Phone Number")]
@@ -46,6 +48,7 @@ namespace EmployeeManagement.Models
         [DisplayName("Employee Photo")]
         public string? Photo { get; set; }
 
+        [DisplayName("Employment Date")]
         public DateTime? EmploymentDate { get; set; }
 
         public int? StatusId { get; set; }
@@ -61,20 +64,42 @@ namespace EmployeeManagement.Models
         public int? ReasonforterminationId { get; set; }
         public SystemCodeDetail Reasonfortermination { get; set; }
 
+        [DisplayName("Bank Name")]
         public int? BankId { get; set; }
         public Bank Bank { get; set; }
 
+        [DisplayName("Bank Account Number")]
         public string? BankAccountNo { get; set; }
+
+        [DisplayName("International Bank Account Number")]
         public string? IBAN { get; set; }
+
+        [DisplayName("SWIFT Code")]
         public string? SWIFTCode { get; set; }
+
+        [DisplayName("N.S.S.F Number")]
         public string? NSSFNO { get; set; }
+
+        [DisplayName("NHIF Number")]
         public string? NHIF { get; set; }
+
+        [DisplayName("Company Email")]
         public string? CompanyEmail { get; set; }
+
+        [DisplayName("KRA Pin")]
         public string? KRAPIN { get; set; }
+
+        [DisplayName("Passport Number")]
         public string? PassportNo { get; set; }
 
+        [DisplayName("Employment Term")]
         public int? EmploymentTermsId { get; set; }
         public SystemCodeDetail EmploymentTerms { get; set; }
+
+        [DisplayName("Allocated Leave Days")]
+        public Decimal? AllocatedLeaveDays { get; set; }
+        [DisplayName("Leave Balance")]
+        public Decimal? LeaveOutstandingBalance { get; set; }
 
     }
 }

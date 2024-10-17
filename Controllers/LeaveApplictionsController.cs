@@ -115,27 +115,52 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> ApproveLeave(LeaveAppliction leave)
         {
-            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var approvedstatus = _context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "LeaveApprovalStatus" && y.Code == "Approved").FirstOrDefault();
+            var approvedstatus = _context.SystemCodeDetails
+                .Include(x => x.SystemCode)
+                .Where(y => y.SystemCode.Code == "LeaveApprovalStatus" && y.Code == "Approved")
+                .FirstOrDefault();
 
-            var LeaveAppliction = await _context.LeaveApplictions
+            var adjustmentType = _context.SystemCodeDetails
+                .Include(x => x.SystemCode)
+                .Where(y => y.SystemCode.Code == "LeaveAdjustment" && y.Code == "Negative")
+                .FirstOrDefault();
+
+            var leaveAppliction = await _context.LeaveApplictions
                 .Include(l => l.Duration)
                 .Include(l => l.Employee)
                 .Include(l => l.LeaveType)
                 .Include(l => l.Status)
                 .FirstOrDefaultAsync(m => m.Id == leave.Id);
 
-            if (LeaveAppliction == null)
+            if (leaveAppliction == null)
             {
                 return NotFound();
             }
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            leaveAppliction.ApprovedOn = DateTime.Now;
+            leaveAppliction.ApprovedById = Userid;
+            leaveAppliction.StatusId = approvedstatus!.Id;
+            leaveAppliction.ApprovalNotes = leave.ApprovalNotes;
+            _context.Update(leaveAppliction);
+            await _context.SaveChangesAsync(Userid);
 
-            LeaveAppliction.ApprovedOn = DateTime.Now;
-            LeaveAppliction.ApprovedById = "Code Craft";
-            LeaveAppliction.StatusId = approvedstatus!.Id;
-            LeaveAppliction.ApprovalNotes = leave.ApprovalNotes;
+            var adjustment = new LeaveAdjustmentEntry
+            {
+                EmployeeId = leaveAppliction.EmployeeId,
+                NoOfDays = leaveAppliction.NoOfDays,
+                LeaveStartDate = leaveAppliction.StartDate,
+                LeaveEndDate = leaveAppliction.EndDate,
+                AdjustmentDescription = "Leave Taken Negative Adjustment",
+                LeavePeriod = "2024",
+                LeaveAdjustmentDays = DateTime.Now,
+                AdjustmentTypeId = adjustmentType.Id,
+            };
+            _context.Add(adjustment);
+            await _context.SaveChangesAsync(Userid);
 
-            _context.Update(LeaveAppliction);
+            var employee = await _context.Employees.FindAsync(leaveAppliction.EmployeeId);
+            employee.LeaveOutstandingBalance =(employee.AllocatedLeaveDays - leaveAppliction.NoOfDays);
+            _context.Update(employee);
             await _context.SaveChangesAsync(Userid);
 
             ViewData["DurationId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "LeaveDuration"), "Id", "Description");
@@ -248,11 +273,11 @@ namespace EmployeeManagement.Controllers
             ModelState.Remove("ModifiedById");
             ModelState.Remove("ApprovedById");
 
-            // Check if the model state is valid
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
                 _context.LeaveApplictions.Add(LeaveAppliction);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
             }
 
