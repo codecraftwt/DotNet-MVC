@@ -151,8 +151,8 @@ namespace EmployeeManagement.Controllers
                 LeaveStartDate = leaveAppliction.StartDate,
                 LeaveEndDate = leaveAppliction.EndDate,
                 AdjustmentDescription = "Leave Taken Negative Adjustment",
-                LeavePeriod = "2024",
-                LeaveAdjustmentDays = DateTime.Now,
+                LeavePeriodId = 0,
+                LeaveAdjustmentDate = DateTime.Now,
                 AdjustmentTypeId = adjustmentType.Id,
             };
             _context.Add(adjustment);

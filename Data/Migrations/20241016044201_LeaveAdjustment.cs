@@ -20,7 +20,7 @@ namespace EmployeeManagement.Migrations
                     LeavePeriod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
                     NoOfDays = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    LeaveAdjustmentDays = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LeaveAdjustmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LeaveStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LeaveEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AdjustmentDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),

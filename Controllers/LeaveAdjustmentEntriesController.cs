@@ -59,7 +59,7 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDays,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
+        public async Task<IActionResult> Create([Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDate,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDays,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDate,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
         {
             if (id != leaveAdjustmentEntry.Id)
             {

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241016044201_LeaveAdjustment")]
-    partial class LeaveAdjustment
+    [Migration("20241017070130_LeavePeriod")]
+    partial class LeavePeriod
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -548,6 +548,13 @@ namespace EmployeeManagement.Migrations
                     b.Property<int>("AdjustmentTypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
@@ -557,11 +564,17 @@ namespace EmployeeManagement.Migrations
                     b.Property<DateTime?>("LeaveEndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LeavePeriod")
+                    b.Property<int?>("LeavePeriodId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LeaveStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedById")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("LeaveStartDate")
+                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("NoOfDays")
@@ -572,6 +585,8 @@ namespace EmployeeManagement.Migrations
                     b.HasIndex("AdjustmentTypeId");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("LeavePeriodId");
 
                     b.ToTable("LeaveAdjustmentEntries");
                 });
@@ -647,6 +662,53 @@ namespace EmployeeManagement.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("LeaveApplictions");
+                });
+
+            modelBuilder.Entity("EmployeeManagement.Models.LeavePeriod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Closed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Locked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LeavePeriods");
                 });
 
             modelBuilder.Entity("EmployeeManagement.Models.LeaveType", b =>
@@ -1064,9 +1126,16 @@ namespace EmployeeManagement.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("EmployeeManagement.Models.LeavePeriod", "LeavePeriod")
+                        .WithMany()
+                        .HasForeignKey("LeavePeriodId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("AdjustmentType");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("LeavePeriod");
                 });
 
             modelBuilder.Entity("EmployeeManagement.Models.LeaveAppliction", b =>
