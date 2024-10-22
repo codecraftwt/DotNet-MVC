@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
 using System.Security.Claims;
+using EmployeeManagement.ViewModels;
+using AutoMapper;
 
 namespace EmployeeManagement.Controllers
 {
@@ -15,16 +17,41 @@ namespace EmployeeManagement.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-        public EmployeesController(IConfiguration configuration, ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public EmployeesController(IMapper mapper, IConfiguration configuration, ApplicationDbContext context)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(EmployeeViewModel employees)
         {
-            return View(await _context.Employees.Include(x => x.Status).ToListAsync());
+            var rawdata = _context.Employees.Include(x => x.Status).AsQueryable();
+
+            if(!string.IsNullOrEmpty(employees.EmpNo))
+            {
+                rawdata = rawdata
+                    .Where(x => x.EmpNo.Contains(employees.EmpNo));
+            }
+            if(!string.IsNullOrEmpty(employees.FullName.Trim()))
+            {
+                rawdata = rawdata
+                   .Where(x => x.FullName.Contains(employees.FullName));
+            }
+            if(employees.PhoneNumber > 0)
+            {
+                rawdata = rawdata
+                   .Where(x => x.PhoneNumber == employees.PhoneNumber);
+            }
+            if (!string.IsNullOrEmpty(employees.EmailAddress))
+            {
+                rawdata = rawdata
+                    .Where(x => x.EmailAddress == employees.EmailAddress);
+            }
+            employees.Employees = await rawdata.ToListAsync();
+            return View(employees);
         }
 
         // GET: Employees/Details/5
@@ -50,6 +77,7 @@ namespace EmployeeManagement.Controllers
         {
             ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name");
             ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code== "EmploymentTerms"), "Id", "Description");
+            ViewData["DisabilityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code== "DisabilityTypes"), "Id", "Description");
             ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code=="Gender"), "Id", "Description");
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
@@ -62,8 +90,11 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Employee employee, IFormFile employeephoto)
+        public async Task<IActionResult> Create(EmployeeViewModel newemployee, IFormFile employeephoto)
         {
+            var employee = new Employee();
+            _mapper.Map(newemployee, employee);
+
             if(employeephoto.Length > 0)
             {
                 var fileName = "EmployeePhoto_" + DateTime.Now.ToString("yyyymmddhhmmss") + "_" + employeephoto.FileName;
@@ -101,6 +132,7 @@ namespace EmployeeManagement.Controllers
 
             ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name", employee.BankId);
             ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "EmploymentTerms"), "Id", "Description", employee.EmploymentTermsId);
+            ViewData["DisabilityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "DisabilityTypes"), "Id", "Description", employee.DisabilityId);
             ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", employee.GenderId);
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", employee.CountryId);
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);

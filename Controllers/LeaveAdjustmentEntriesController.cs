@@ -61,12 +61,11 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDate,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
         {
-            if (ModelState.IsValid)
-            {
+            
                 _context.Add(leaveAdjustmentEntry);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+            
             ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Id", leaveAdjustmentEntry.AdjustmentTypeId);
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "Id", leaveAdjustmentEntry.EmployeeId);
             return View(leaveAdjustmentEntry);

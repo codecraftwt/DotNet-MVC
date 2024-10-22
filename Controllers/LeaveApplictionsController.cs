@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
 using System.Security.Claims;
+using EmployeeManagement.Migrations;
 
 namespace EmployeeManagement.Controllers
 {
     public class LeaveApplictionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public LeaveApplictionsController(ApplicationDbContext context)
+        public LeaveApplictionsController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: LeaveApplictions
@@ -139,6 +142,7 @@ namespace EmployeeManagement.Controllers
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             leaveAppliction.ApprovedOn = DateTime.Now;
             leaveAppliction.ApprovedById = Userid;
+            leaveAppliction.CreatedById = "";
             leaveAppliction.StatusId = approvedstatus!.Id;
             leaveAppliction.ApprovalNotes = leave.ApprovalNotes;
             _context.Update(leaveAppliction);
@@ -147,11 +151,13 @@ namespace EmployeeManagement.Controllers
             var adjustment = new LeaveAdjustmentEntry
             {
                 EmployeeId = leaveAppliction.EmployeeId,
+                CreatedById = leaveAppliction.CreatedById = "",
+                ModifiedById = leaveAppliction.ModifiedById = "",
                 NoOfDays = leaveAppliction.NoOfDays,
                 LeaveStartDate = leaveAppliction.StartDate,
                 LeaveEndDate = leaveAppliction.EndDate,
                 AdjustmentDescription = "Leave Taken Negative Adjustment",
-                LeavePeriodId = 0,
+                LeavePeriodId = 2,
                 LeaveAdjustmentDate = DateTime.Now,
                 AdjustmentTypeId = adjustmentType.Id,
             };
@@ -227,9 +233,18 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LeaveAppliction LeaveAppliction)
+        public async Task<IActionResult> Create(LeaveAppliction LeaveAppliction, IFormFile leaveattachment)
         {
-            // Retrieve the pending status and await the result
+            if (leaveattachment.Length > 0)
+            {
+                var fileName = "LeaveAttachmemt_" + DateTime.Now.ToString("yyyymmddhhmmss") + "_" + leaveattachment.FileName;
+                var path = _configuration["FileSettings:UploadFolder"]!;
+                var filePath = Path.Combine(path, fileName);
+                var stream = new FileStream(filePath, FileMode.Create);
+                await leaveattachment.CopyToAsync(stream);
+                LeaveAppliction.Attachment = fileName;
+            }
+
             var pendingStatus = await _context.SystemCodeDetails
                 .Include(x => x.SystemCode)
                 .Where(y => y.Code == "AwaitingApproval" && y.SystemCode.Code == "LeaveApprovalStatus")

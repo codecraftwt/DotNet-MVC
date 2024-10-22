@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
+﻿using EmployeeManagement.Models;
+using System.ComponentModel;
 
-namespace EmployeeManagement.Models
+namespace EmployeeManagement.ViewModels
 {
-    public class Employee : UserActivity
+    public class EmployeeViewModel
     {
         public int Id { get; set; }
         public String EmpNo { get; set; }
@@ -27,7 +28,6 @@ namespace EmployeeManagement.Models
 
         [DisplayName("Country")]
         public int? CountryId { get; set; }
-        public Country Country { get; set; }
 
         [DisplayName("Date of Birth")]
         public DateTime DateOfBirth { get; set; }
@@ -39,11 +39,9 @@ namespace EmployeeManagement.Models
 
         [DisplayName("Designation")]
         public int? DesignationId { get; set; }
-        public Designation Designation { get; set; }
 
         [DisplayName("Gender")]
         public int? GenderId { get; set; }
-        public SystemCodeDetail Gender { get; set; }
 
         [DisplayName("Employee Photo")]
         public string? Photo { get; set; }
@@ -52,17 +50,14 @@ namespace EmployeeManagement.Models
         public DateTime? EmploymentDate { get; set; }
 
         public int? StatusId { get; set; }
-        public SystemCodeDetail Status { get; set; }
 
         public DateTime? InactiveDate { get; set; }
 
         public int? CauseofInactivityId { get; set; }
-        public SystemCodeDetail CauseofInactivity { get; set; }
 
         public DateTime? TerminationDate { get; set; }
 
         public int? ReasonforterminationId { get; set; }
-        public SystemCodeDetail Reasonfortermination { get; set; }
 
         [DisplayName("Bank Name")]
         public int? BankId { get; set; }
@@ -94,7 +89,6 @@ namespace EmployeeManagement.Models
 
         [DisplayName("Employment Term")]
         public int? EmploymentTermsId { get; set; }
-        public SystemCodeDetail EmploymentTerms { get; set; }
 
         [DisplayName("Allocated Leave Days")]
         public Decimal? AllocatedLeaveDays { get; set; }
@@ -106,7 +100,8 @@ namespace EmployeeManagement.Models
 
         [DisplayName("Disability Type")]
         public int? DisabilityId { get; set; }
-        public SystemCodeDetail Disability { get; set; }
         public string? DisabilityCirtificate { get; set; }
+        public Employee Employee { get; set; }
+        public List<Employee> Employees { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using EmployeeManagement.Profiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,16 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthentication();
+var config = new AutoMapper.MapperConfiguration
+    (options =>
+    {
+        options.AllowNullDestinationValues = true;
+        options.AllowNullCollections = true;
+        options.AddProfile(new AutomapperProfiles());
+    });
+
+var mapper = config.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 
