@@ -62,7 +62,7 @@ namespace EmployeeManagement.Controllers
         {
                 var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 systemProfile.CreatedById = Userid;
-                systemProfile.ModifiedById = "Expert";
+                systemProfile.ModifiedById = "";
                 _context.Add(systemProfile);
                 await _context.SaveChangesAsync(Userid);
                 return RedirectToAction(nameof(Index));
@@ -84,7 +84,7 @@ namespace EmployeeManagement.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProfileId"] = new SelectList(_context.SystemProfiles, "Id", "Id", systemProfile.ProfileId);
+            ViewData["ProfileId"] = new SelectList(_context.SystemProfiles, "Id", "Name", systemProfile.ProfileId);
             return View(systemProfile);
         }
 
@@ -93,19 +93,20 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ProfileId,Order,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemProfile systemProfile)
+        public async Task<IActionResult> Edit(int id, SystemProfile systemProfile)
         {
             if (id != systemProfile.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
                 try
                 {
+                    var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    systemProfile.ModifiedById = Userid;
+                    systemProfile.CreatedById = "";
                     _context.Update(systemProfile);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(Userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -119,8 +120,8 @@ namespace EmployeeManagement.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["ProfileId"] = new SelectList(_context.SystemProfiles, "Id", "Id", systemProfile.ProfileId);
+
+            ViewData["ProfileId"] = new SelectList(_context.SystemProfiles, "Id", "Name", systemProfile.ProfileId);
             return View(systemProfile);
         }
 

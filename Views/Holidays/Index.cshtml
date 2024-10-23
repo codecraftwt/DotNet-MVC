@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EmployeeManagement.Models.Holiday>
+﻿@model EmployeeManagement.ViewModels.HolidayViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -7,6 +7,51 @@
 <p>
     <a asp-action="Create" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Holiday</a>
 </p>
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="col-md-12">
+            <form id="searchForm" asp-action="Index" enctype="multipart/form-data" class="form-vertical">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="StartDate" class="control-label"></label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="EndDate" class="control-label"></label>
+                        <input asp-for="EndDate" type="date" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success btn-block m-tb-10">
+                            <i class="fa fa-search"></i> Search
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="clearBtn" class="btn btn-default btn-block m-tb-10">
+                            <i class="fa fa-eraser"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("clearBtn").addEventListener("click", function () {
+        debugger;
+        document.getElementById("searchForm").reset();
+    });
+</script>
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Holidays List</h3>
@@ -37,7 +82,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Holidays)
                 {
                     <tr>
                         <td>

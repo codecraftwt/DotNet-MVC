@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
 using System.Security.Claims;
+using EmployeeManagement.ViewModels;
 
 namespace EmployeeManagement.Controllers
 {
@@ -21,9 +22,27 @@ namespace EmployeeManagement.Controllers
         }
 
         // GET: Holidays
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(HolidayViewModel HVM)
         {
-            return View(await _context.Holidays.ToListAsync());
+            var holidays = _context.Holidays.AsQueryable();
+            if(!string.IsNullOrEmpty(HVM.Title))
+            {
+                holidays = holidays.Where(x=> x.Title.Contains(HVM.Title));
+            }
+            if(!string.IsNullOrEmpty(HVM.Description))
+            {
+                holidays = holidays.Where(x=> x.Description.Contains(HVM.Description));
+            }
+            if(HVM.StartDate !=null)
+            {
+                holidays = holidays.Where(x=> x.StartDate == HVM.StartDate);
+            }
+            if(HVM.EndDate != null)
+            {
+                holidays = holidays.Where(x=> x.EndDate == HVM.EndDate);
+            }
+            HVM.Holidays = await holidays.ToListAsync();
+            return View(HVM);
         }
 
         // GET: Holidays/Details/5
