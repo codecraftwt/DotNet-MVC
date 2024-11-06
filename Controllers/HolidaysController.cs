@@ -24,24 +24,7 @@ namespace EmployeeManagement.Controllers
         // GET: Holidays
         public async Task<IActionResult> Index(HolidayViewModel HVM)
         {
-            var holidays = _context.Holidays.AsQueryable();
-            if(!string.IsNullOrEmpty(HVM.Title))
-            {
-                holidays = holidays.Where(x=> x.Title.Contains(HVM.Title));
-            }
-            if(!string.IsNullOrEmpty(HVM.Description))
-            {
-                holidays = holidays.Where(x=> x.Description.Contains(HVM.Description));
-            }
-            if(HVM.StartDate !=null)
-            {
-                holidays = holidays.Where(x=> x.StartDate == HVM.StartDate);
-            }
-            if(HVM.EndDate != null)
-            {
-                holidays = holidays.Where(x=> x.EndDate == HVM.EndDate);
-            }
-            HVM.Holidays = await holidays.ToListAsync();
+            HVM.Holidays = await _context.Holidays.ToListAsync();
             return View(HVM);
         }
 

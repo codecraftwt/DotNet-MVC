@@ -1,8 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Employees Page";
 }
-
-
+<div class="row">
+    <div class="col-lg-12 col-6">
+        <!-- small box -->
+        <div class="small-box bg-primary">
+            <div class="inner">
+                <h1>Welcome back, @User.Identity.Name.Split('@')[0]</h1>
+                @* <p>New Orders</p> *@
+            </div>
+            <div class="icon">
+                <i class="ion ion-bag"></i>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Small boxes (Stat box) -->
 <div class="row">
     <div class="col-lg-3 col-6">
@@ -11,7 +23,7 @@
             <div class="inner">
                 <h3>150</h3>
 
-                <p>New Orders</p>
+                <p>Track Employee Details</p>
             </div>
             <div class="icon">
                 <i class="ion ion-bag"></i>

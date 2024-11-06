@@ -28,29 +28,7 @@ namespace EmployeeManagement.Controllers
         // GET: Employees
         public async Task<IActionResult> Index(EmployeeViewModel employees)
         {
-            var rawdata = _context.Employees.Include(x => x.Status).AsQueryable();
-
-            if(!string.IsNullOrEmpty(employees.EmpNo))
-            {
-                rawdata = rawdata
-                    .Where(x => x.EmpNo.Contains(employees.EmpNo));
-            }
-            if(!string.IsNullOrEmpty(employees.FullName.Trim()))
-            {
-                rawdata = rawdata
-                   .Where(x => x.FullName.Contains(employees.FullName));
-            }
-            if(employees.PhoneNumber > 0)
-            {
-                rawdata = rawdata
-                   .Where(x => x.PhoneNumber == employees.PhoneNumber);
-            }
-            if (!string.IsNullOrEmpty(employees.EmailAddress))
-            {
-                rawdata = rawdata
-                    .Where(x => x.EmailAddress == employees.EmailAddress);
-            }
-            employees.Employees = await rawdata.ToListAsync();
+            employees.Employees = await _context.Employees.Include(x => x.Status).ToListAsync();
             return View(employees);
         }
 
@@ -161,6 +139,7 @@ namespace EmployeeManagement.Controllers
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
             ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name");
+            ViewBag.ExistingPhoto = employee.Photo;
             return View(employee);
         }
 
@@ -169,19 +148,40 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EmpNo,FirstName,MiddleName,LastName,PhoneNumber,EmailAddress,Country,DateOfBirth,Address,Department,Designation,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Employee employee)
+        public async Task<IActionResult> Edit(int id, Employee employee, IFormFile? employeephoto)
         {
+            if (employeephoto != null && employeephoto.Length > 0)
+            {
+                var fileName = "EmployeePhoto_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + employeephoto.FileName;
+                var path = _configuration["FileSettings:UploadFolder"]!;
+                var filePath = Path.Combine(path, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await employeephoto.CopyToAsync(stream);
+                }
+
+                // Update employee photo only if a new photo is uploaded
+                employee.Photo = fileName;
+            }
+
+            var statusId = await _context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "EmployeeStatus" && x.Code == "Active").FirstOrDefaultAsync();
+
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            employee.CreatedById = "";
+            employee.ModifiedById = Userid;
+            employee.StatusId = statusId.Id;
+
             if (id != employee.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
+
                 try
                 {
                     _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(Userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -195,7 +195,7 @@ namespace EmployeeManagement.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+
 
             ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name", employee.BankId);
             ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "EmploymentTerms"), "Id", "Description", employee.EmploymentTermsId);

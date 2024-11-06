@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Employee Management System</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="~/AdminLTE/plugins/fontawesome-free/css/all.min.css">
@@ -174,6 +176,19 @@
                         <i class="fas fa-th-large"></i>
                     </a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#" style="color:lightgray">
+                        <i class="far fa-user"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <form class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                <button type="submit" class="btn "><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                            </form>
+                        }
+                    </div>
+                </li>
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -203,7 +218,8 @@
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
+                            @* <a href="#" class="nav-link active"> *@
+                            <a asp-action="Index" asp-controller="Home" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Dashboard
