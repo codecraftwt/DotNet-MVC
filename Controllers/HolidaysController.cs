@@ -101,6 +101,7 @@ namespace EmployeeManagement.Controllers
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             holiday.ModifiedById = Userid;
             holiday.ModifiedOn = DateTime.Now;
+            holiday.CreatedById = "";
             try
                 {
                     _context.Update(holiday);
@@ -145,13 +146,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var holiday = await _context.Holidays.FindAsync(id);
             if (holiday != null)
             {
                 _context.Holidays.Remove(holiday);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

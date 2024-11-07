@@ -41,6 +41,13 @@ namespace EmployeeManagement.Controllers
             }
 
             var employee = await _context.Employees
+                .Include(e => e.Gender)
+                .Include(e => e.Country)
+                .Include(e => e.Department)
+                .Include(e => e.Designation)
+                .Include(e => e.Bank)
+                .Include(e => e.EmploymentTerms)
+                .Include(e => e.Disability)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
@@ -216,6 +223,13 @@ namespace EmployeeManagement.Controllers
             }
 
             var employee = await _context.Employees
+                .Include(e => e.Gender)
+                .Include(e => e.Country)
+                .Include(e => e.Department)
+                .Include(e => e.Designation)
+                .Include(e => e.Bank)
+                .Include(e => e.EmploymentTerms)
+                .Include(e => e.Disability)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
@@ -230,13 +244,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
             {
                 _context.Employees.Remove(employee);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

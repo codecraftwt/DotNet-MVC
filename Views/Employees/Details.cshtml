@@ -4,185 +4,191 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Employee Details</h1>
-
-<div class="col-md-12">
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-bordered table-striped">
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EmpNo)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.EmpNo)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstName)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.FirstName)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.MiddleName)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.MiddleName)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.LastName)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.LastName)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.PhoneNumber)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.PhoneNumber)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EmailAddress)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.EmailAddress)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Gender)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Gender)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Country)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Country)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.DateOfBirth)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.DateOfBirth)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EmploymentDate)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.EmploymentDate)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Address)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Address)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Department)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Department)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Designation)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Designation)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Bank)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Bank)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.BankAccountNo)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.BankAccountNo)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IBAN)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.IBAN)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.SWIFTCode)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.SWIFTCode)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.NSSFNO)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.NSSFNO)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.NHIF)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.NHIF)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.CompanyEmail)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.CompanyEmail)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.KRAPIN)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.KRAPIN)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.PassportNo)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.PassportNo)
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EmploymentTerms)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.EmploymentTerms)
-                    </td>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Disability)
-                    </th>
-                    <td>
-                        @Html.DisplayFor(model => model.Disability)
-                    </td>
-                </tr>
-            </table>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Employee Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmpNo)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.EmpNo)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FirstName)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.FirstName)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.MiddleName)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.MiddleName)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LastName)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.LastName)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.PhoneNumber)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmailAddress)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.EmailAddress)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Gender)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Gender.Description)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Country)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Country.Name)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DateOfBirth)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.DateOfBirth)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmploymentDate)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.EmploymentDate)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Address)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Address)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Department)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Department.Name)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Designation)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Designation.Name)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Bank)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Bank.Name)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.BankAccountNo)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.BankAccountNo)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.IBAN)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.IBAN)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SWIFTCode)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.SWIFTCode)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.NSSFNO)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.NSSFNO)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.NHIF)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.NHIF)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CompanyEmail)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.CompanyEmail)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.KRAPIN)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.KRAPIN)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.PassportNo)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.PassportNo)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmploymentTerms)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.EmploymentTerms.Description)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Disability)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Disability.Description)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
