@@ -1,0 +1,54 @@
+﻿@model EmployeeManagement.Models.Employee
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Employee Leave Balance Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmpNo)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.EmpNo)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FullName)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.FullName)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.AllocatedLeaveDays)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.AllocatedLeaveDays)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LeaveOutstandingBalance)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.LeaveOutstandingBalance)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Index">
+    <button type="submit" class="btn btn-primary">Back to List</button>
+</form>

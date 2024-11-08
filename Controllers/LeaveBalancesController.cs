@@ -23,11 +23,31 @@ namespace EmployeeManagement.Controllers
             return View(result);
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var employee = await _context.Employees
+                .Include(x => x.Status)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return View(employee);
+        }
+
         [HttpGet]
         public IActionResult AdjustLeaveBalance(int id)
         {
             LeaveAdjustmentEntry leaveAdjustment = new();
             leaveAdjustment.EmployeeId = id;
+            leaveAdjustment.LeaveAdjustmentDate = DateTime.Now;
 
             ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails
                 .Include(y => y.SystemCode)

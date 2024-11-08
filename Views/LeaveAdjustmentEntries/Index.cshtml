@@ -13,7 +13,7 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.LeavePeriodId)
+                        @Html.DisplayNameFor(model => model.LeavePeriod)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Employee)
@@ -38,7 +38,7 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.LeavePeriodId)
+                            @Html.DisplayFor(modelItem => item.LeavePeriod.Name)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Employee.FullName)

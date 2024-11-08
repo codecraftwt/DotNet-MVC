@@ -4,63 +4,71 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>LeaveAdjustmentEntry</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LeavePeriod)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LeavePeriod)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Employee)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Employee.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NoOfDays)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NoOfDays)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LeaveAdjustmentDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LeaveAdjustmentDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LeaveStartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LeaveStartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LeaveEndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LeaveEndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdjustmentDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdjustmentDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdjustmentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdjustmentType.Id)
-        </dd>
-    </dl>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Holiday Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LeavePeriod)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.LeavePeriod.Name)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Employee)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Employee.FullName)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.NoOfDays)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.NoOfDays)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LeaveAdjustmentDate)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.LeaveAdjustmentDate)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.AdjustmentDescription)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.AdjustmentDescription)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.AdjustmentType)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.AdjustmentType.Description)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
+<form asp-action="Index">
+    <button type="submit" class="btn btn-success">Back to List</button>
+</form>
+@* <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+    <input type="button" asp-action="Index" value="Back to List" class="btn btn-success" />
 </div>
+ *@

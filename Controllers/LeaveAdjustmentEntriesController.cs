@@ -22,7 +22,7 @@ namespace EmployeeManagement.Controllers
         // GET: LeaveAdjustmentEntries
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.LeaveAdjustmentEntries.Include(l => l.AdjustmentType).Include(l => l.Employee);
+            var applicationDbContext = _context.LeaveAdjustmentEntries.Include(l => l.AdjustmentType).Include(l => l.Employee).Include(l=>l.LeavePeriod);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -37,6 +37,7 @@ namespace EmployeeManagement.Controllers
             var leaveAdjustmentEntry = await _context.LeaveAdjustmentEntries
                 .Include(l => l.AdjustmentType)
                 .Include(l => l.Employee)
+                .Include(l => l.LeavePeriod)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (leaveAdjustmentEntry == null)
             {

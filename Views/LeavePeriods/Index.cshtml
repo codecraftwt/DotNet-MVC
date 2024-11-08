@@ -9,7 +9,7 @@
 </p>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Employees List</h3>
+        <h3 class="card-title">Leave Period List</h3>
     </div>
     <div class="card-body">
         <table id="example1" class="table table-bordered table-striped">
@@ -47,9 +47,18 @@
                             @Html.DisplayFor(modelItem => item.EndDate)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Actions
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="actionDropdown">
+                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pen"></i> Edit</a>
+
+                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="fa fa-eye"></i> View</a>
+
+                                    <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id"><i class="fa fa-trash"></i> Delete</a>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 }
