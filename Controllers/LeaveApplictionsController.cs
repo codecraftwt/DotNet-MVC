@@ -165,7 +165,7 @@ namespace EmployeeManagement.Controllers
             await _context.SaveChangesAsync(Userid);
 
             var employee = await _context.Employees.FindAsync(leaveAppliction.EmployeeId);
-            employee.LeaveOutstandingBalance =(employee.AllocatedLeaveDays - leaveAppliction.NoOfDays);
+            employee.LeaveOutstandingBalance = (employee.AllocatedLeaveDays - leaveAppliction.NoOfDays);
             _context.Update(employee);
             await _context.SaveChangesAsync(Userid);
 
@@ -213,14 +213,14 @@ namespace EmployeeManagement.Controllers
             {
                 return NotFound();
             }
-
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             LeaveAppliction.ApprovedOn = DateTime.Now;
             LeaveAppliction.ApprovedById = "Code Craft";
             LeaveAppliction.StatusId = rejectedstatus!.Id;
             LeaveAppliction.ApprovalNotes = leave.ApprovalNotes;
 
             _context.Update(LeaveAppliction);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
 
             ViewData["DurationId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "LeaveDuration"), "Id", "Description");
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName");
@@ -350,7 +350,7 @@ namespace EmployeeManagement.Controllers
             // Fetch the pending status
             var pendingStatus = await _context.SystemCodeDetails
                 .Include(x => x.SystemCode)
-                .Where(y => y.Code == "Pending" && y.SystemCode.Code == "LeaveApprovalStatus")
+                .Where(y => y.Code == "AwaitingApproval" && y.SystemCode.Code == "LeaveApprovalStatus")
                 .FirstOrDefaultAsync();
 
             if (pendingStatus == null)
@@ -358,7 +358,7 @@ namespace EmployeeManagement.Controllers
                 ModelState.AddModelError("StatusId", "Pending status not found.");
                 return View(leaveAppliction);
             }
-
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
                 try
@@ -368,7 +368,7 @@ namespace EmployeeManagement.Controllers
                     leaveAppliction.StatusId = pendingStatus.Id;
 
                     _context.Entry(leaveAppliction).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(Userid);
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -433,13 +433,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var LeaveAppliction = await _context.LeaveApplictions.FindAsync(id);
             if (LeaveAppliction != null)
             {
                 _context.LeaveApplictions.Remove(LeaveAppliction);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

@@ -102,14 +102,14 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var oldleavetype = await _context.LeaveTypes.FindAsync(id);
+            leaveType.ModifiedById = Userid;
+            leaveType.ModifiedOn = DateTime.Now;
+            leaveType.CreatedById = "Code Craft";
+
+            try
                 {
-                    var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var oldleavetype = await _context.LeaveTypes.FindAsync(id);
-                    leaveType.ModifiedById = Userid;
-                    leaveType.ModifiedOn = DateTime.Now;
                     _context.Entry(oldleavetype).CurrentValues.SetValues(leaveType);
                     await _context.SaveChangesAsync(Userid);
                 }
@@ -125,7 +125,7 @@ namespace EmployeeManagement.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+
             return View(leaveType);
         }
 
