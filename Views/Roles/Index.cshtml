@@ -44,8 +44,8 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="actionDropdown">
                                     <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pen"></i> Edit</a>
-                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="fa fa-eye"></i> View</a>
-                                    <a class="dropdown-item" asp-action="UserRights" asp-route-id="@item.Id" asp-controller="Profiles"><i class="fa fa-lock"></i> Assign Roles</a>
+                                    @* <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="fa fa-eye"></i> View</a> *@
+                                    <a class="dropdown-item" asp-action="UserRights" asp-route-id="@item.Id" asp-controller="Roles"><i class="fa fa-lock"></i> Assign Rights</a>
                                 </div>
                             </div>
                         </td>
