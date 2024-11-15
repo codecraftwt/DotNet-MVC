@@ -4,50 +4,66 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Country</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Code)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Code)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedById)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedById)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedOn)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedOn)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedById)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedById)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedOn)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedOn)
-        </dd>
-    </dl>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Country Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Code)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Code)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.Name)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CreatedById)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.CreatedById)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CreatedOn)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.CreatedOn)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ModifiedById)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.ModifiedById)
+                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ModifiedOn)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(model => model.ModifiedOn)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

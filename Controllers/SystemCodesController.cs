@@ -59,12 +59,13 @@ namespace EmployeeManagement.Controllers
         {
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             systemCode.CreatedById = Userid;
+            systemCode.CreatedOn = DateTime.Today;
             systemCode.ModifiedById = "";
-            systemCode.CreatedOn = DateTime.Now;
+            systemCode.ModifiedOn = DateTime.MinValue;
 
-                _context.Add(systemCode);
-                await _context.SaveChangesAsync(Userid);
-                return RedirectToAction(nameof(Index));
+            _context.Add(systemCode);
+            await _context.SaveChangesAsync(Userid);
+            return RedirectToAction(nameof(Index));
 
             return View(systemCode);
         }
@@ -90,33 +91,45 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Description,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCode systemCode)
+        public async Task<IActionResult> Edit(int id, SystemCode systemCode)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingDesignation = await _context.SystemCodes.FindAsync(id);
+            if (existingDesignation == null)
+            {
+                return NotFound();
+            }
+            _context.Entry(existingDesignation).State = EntityState.Detached;
+            // Preserve CreatedById and CreatedOn from the existing record
+            systemCode.CreatedById = existingDesignation.CreatedById;
+            systemCode.CreatedOn = existingDesignation.CreatedOn;
+
+            systemCode.ModifiedById = Userid;
+            systemCode.ModifiedOn = DateTime.Now;
+
             if (id != systemCode.Id)
             {
                 return NotFound();
             }
-            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (ModelState.IsValid)
+
+            try
             {
-                try
-                {
-                    _context.Update(systemCode);
-                    await _context.SaveChangesAsync(Userid);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SystemCodeExists(systemCode.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(systemCode);
+                await _context.SaveChangesAsync(Userid);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SystemCodeExists(systemCode.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
             return View(systemCode);
         }
 
@@ -143,13 +156,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var systemCode = await _context.SystemCodes.FindAsync(id);
             if (systemCode != null)
             {
                 _context.SystemCodes.Remove(systemCode);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

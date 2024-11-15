@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -55,12 +56,16 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(City city)
         {
-            if (ModelState != null)
-            {
-                _context.Add(city);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            city.CreatedById = Userid;
+            city.CreatedOn = DateTime.Today;
+            city.ModifiedById = "";
+            city.ModifiedOn = DateTime.MinValue;
+
+            _context.Add(city);
+            await _context.SaveChangesAsync(Userid);
+            return RedirectToAction(nameof(Index));
+
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", city.CountryId);
             return View(city);
         }
@@ -87,33 +92,45 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,CountryId,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] City city)
+        public async Task<IActionResult> Edit(int id, City city)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingCity = await _context.Cities.FindAsync(id);
+            if (existingCity == null)
+            {
+                return NotFound();
+            }
+            _context.Entry(existingCity).State = EntityState.Detached;
+            // Preserve CreatedById and CreatedOn from the existing record
+            city.CreatedById = existingCity.CreatedById;
+            city.CreatedOn = existingCity.CreatedOn;
+
+            city.ModifiedById = Userid;
+            city.ModifiedOn = DateTime.Now;
+
             if (id != city.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState != null)
+            try
             {
-                try
-                {
-                    _context.Update(city);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CityExists(city.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(city);
+                await _context.SaveChangesAsync(Userid);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CityExists(city.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Id", city.CountryId);
             return View(city);
         }
@@ -142,13 +159,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var city = await _context.Cities.FindAsync(id);
             if (city != null)
             {
                 _context.Cities.Remove(city);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

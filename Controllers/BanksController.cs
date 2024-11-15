@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -56,19 +57,17 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Bank bank)
         {
-            bank.CreatedById = "Code Craft";
-            bank.CreatedOn = DateTime.Now;
-            bank.ModifiedById = bank.CreatedById;
-            bank.ModifiedOn = bank.CreatedOn;
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            bank.CreatedById = Userid;
+            bank.CreatedOn = DateTime.Today;
+            bank.ModifiedById = "";
+            bank.ModifiedOn = DateTime.MinValue;
 
-            ModelState.Remove("CreatedById");
-            ModelState.Remove("ModifiedById");
-            if (ModelState.IsValid)
-            {
-                _context.Add(bank);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+
+            _context.Add(bank);
+            await _context.SaveChangesAsync(Userid);
+            return RedirectToAction(nameof(Index));
+
             return View(bank);
         }
 
@@ -93,33 +92,45 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,AccountNo,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Bank bank)
+        public async Task<IActionResult> Edit(int id, Bank bank)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingBank = await _context.Banks.FindAsync(id);
+            if (existingBank == null)
+            {
+                return NotFound();
+            }
+            _context.Entry(existingBank).State = EntityState.Detached;
+            // Preserve CreatedById and CreatedOn from the existing record
+            bank.CreatedById = existingBank.CreatedById;
+            bank.CreatedOn = existingBank.CreatedOn;
+
+            bank.ModifiedById = Userid;
+            bank.ModifiedOn = DateTime.Now;
+
             if (id != bank.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(bank);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BankExists(bank.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(bank);
+                await _context.SaveChangesAsync(Userid);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BankExists(bank.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
             return View(bank);
         }
 
@@ -146,13 +157,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var bank = await _context.Banks.FindAsync(id);
             if (bank != null)
             {
                 _context.Banks.Remove(bank);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

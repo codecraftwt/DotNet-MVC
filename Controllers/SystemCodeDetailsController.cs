@@ -62,8 +62,9 @@ namespace EmployeeManagement.Controllers
         {
             var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             systemCodeDetail.CreatedById = Userid;
+            systemCodeDetail.CreatedOn = DateTime.Today;
             systemCodeDetail.ModifiedById = "";
-            systemCodeDetail.CreatedOn = DateTime.Now;
+            systemCodeDetail.ModifiedOn = DateTime.MinValue;
 
             _context.Add(systemCodeDetail);
             await _context.SaveChangesAsync(Userid);
@@ -96,32 +97,42 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, SystemCodeDetail systemCodeDetail)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingSystemCodeDetail = await _context.SystemCodeDetails.FindAsync(id);
+            if (existingSystemCodeDetail == null)
+            {
+                return NotFound();
+            }
+            _context.Entry(existingSystemCodeDetail).State = EntityState.Detached;
+            // Preserve CreatedById and CreatedOn from the existing record
+            systemCodeDetail.CreatedById = existingSystemCodeDetail.CreatedById;
+            systemCodeDetail.CreatedOn = existingSystemCodeDetail.CreatedOn;
+
+            systemCodeDetail.ModifiedById = Userid;
+            systemCodeDetail.ModifiedOn = DateTime.Now;
+
             if (id != systemCodeDetail.Id)
             {
                 return NotFound();
             }
-            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            systemCodeDetail.CreatedById = Userid;
-            systemCodeDetail.ModifiedById = Userid;
-            systemCodeDetail.CreatedOn = DateTime.Now;
 
             try
+            {
+                _context.Update(systemCodeDetail);
+                await _context.SaveChangesAsync(Userid);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SystemCodeDetailExists(systemCodeDetail.Id))
                 {
-                    _context.Update(systemCodeDetail);
-                    await _context.SaveChangesAsync(Userid);
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!SystemCodeDetailExists(systemCodeDetail.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Index));
 
             ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description", systemCodeDetail.SystemCodeId);
             return View(systemCodeDetail);
@@ -151,13 +162,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var systemCodeDetail = await _context.SystemCodeDetails.FindAsync(id);
             if (systemCodeDetail != null)
             {
                 _context.SystemCodeDetails.Remove(systemCodeDetail);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

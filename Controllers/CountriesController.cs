@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -54,14 +55,18 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Country country)
+        public async Task<IActionResult> Create(Country country)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(country);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            country.CreatedById = Userid;
+            country.CreatedOn = DateTime.Today;
+            country.ModifiedById = "";
+            country.ModifiedOn = DateTime.MinValue;
+
+            _context.Add(country);
+            await _context.SaveChangesAsync(Userid);
+            return RedirectToAction(nameof(Index));
+
             return View(country);
         }
 
@@ -86,33 +91,45 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Country country)
+        public async Task<IActionResult> Edit(int id, Country country)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingCountry = await _context.Designations.FindAsync(id);
+            if (existingCountry == null)
+            {
+                return NotFound();
+            }
+            _context.Entry(existingCountry).State = EntityState.Detached;
+            // Preserve CreatedById and CreatedOn from the existing record
+            country.CreatedById = existingCountry.CreatedById;
+            country.CreatedOn = existingCountry.CreatedOn;
+
+            country.ModifiedById = Userid;
+            country.ModifiedOn = DateTime.Now;
+
             if (id != country.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(country);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CountryExists(country.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(country);
+                await _context.SaveChangesAsync(Userid);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CountryExists(country.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
             return View(country);
         }
 
@@ -139,13 +156,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var country = await _context.Countries.FindAsync(id);
             if (country != null)
             {
                 _context.Countries.Remove(country);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 

@@ -7,6 +7,7 @@
 <p>
     <a asp-action="Create" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Bank</a>
 </p>
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Banks List</h3>
@@ -25,7 +26,7 @@
                         @Html.DisplayNameFor(model => model.AccountNo)
                     </th>
                     <th>
-                        Action
+                        Actions
                     </th>
                 </tr>
             </thead>
@@ -43,11 +44,18 @@
                             @Html.DisplayFor(modelItem => item.AccountNo)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-pen"></i> Edit</a>
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button" id="actionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Actions
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="actionDropdown">
+                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pen"></i> Edit</a>
 
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning"><i class="fa fa-eye"></i> View</a>
+                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="fa fa-eye"></i> View</a>
 
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</a>
+                                    <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id"><i class="fa fa-trash"></i> Delete</a>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -55,4 +63,3 @@
         </table>
     </div>
 </div>
-

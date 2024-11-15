@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeeManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -54,14 +55,17 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Designation designation)
+        public async Task<IActionResult> Create(Designation designation)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(designation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            designation.CreatedById = Userid;
+            designation.CreatedOn = DateTime.Today;
+            designation.ModifiedById = "";
+            designation.ModifiedOn = DateTime.MinValue;
+            _context.Add(designation);
+            await _context.SaveChangesAsync(Userid);
+            return RedirectToAction(nameof(Index));
+
             return View(designation);
         }
 
@@ -86,33 +90,44 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Designation designation)
+        public async Task<IActionResult> Edit(int id, Designation designation)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingDesignation = await _context.Designations.FindAsync(id);
+            if (existingDesignation == null)
+            {
+                return NotFound();
+            }
+            _context.Entry(existingDesignation).State = EntityState.Detached;
+            // Preserve CreatedById and CreatedOn from the existing record
+            designation.CreatedById = existingDesignation.CreatedById;
+            designation.CreatedOn = existingDesignation.CreatedOn;
+
+            designation.ModifiedById = Userid;
+            designation.ModifiedOn = DateTime.Now;
             if (id != designation.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(designation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DesignationExists(designation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(designation);
+                await _context.SaveChangesAsync(Userid);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DesignationExists(designation.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
             return View(designation);
         }
 
@@ -139,13 +154,14 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var designation = await _context.Designations.FindAsync(id);
             if (designation != null)
             {
                 _context.Designations.Remove(designation);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(Userid);
             return RedirectToAction(nameof(Index));
         }
 
